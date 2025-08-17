@@ -1,0 +1,54 @@
+name: Deploy youtube-comments-digest lambda
+
+on:
+  push:
+    branches:
+      - trunk
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for OIDC authentication
+      contents: read  # Required to check out the repository
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Prepare deployment directory
+        run: |
+          mkdir -p lambda-packages
+
+          pip install \
+            --platform manylinux2014_x86_64 \
+            --target lambda-package/ \
+            --implementation cp \
+            --python-version 3.13 \
+            --only-binary=:all: \
+            dominate requests
+
+          cp lambda_function.py lambda-package/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy Lambda Function
+        uses: aws-actions/aws-lambda-deploy@v1
+        with:
+          function-name: youtube-comments-digest
+          code-artifacts-dir: lambda-package/
+          handler: lambda_function.lambda_handler
+          runtime: python3.13
+          timeout: 30
+          memory-size: 128
