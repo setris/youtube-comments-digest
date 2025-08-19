@@ -35,7 +35,7 @@ jobs:
             --only-binary=:all: \
             dominate requests
 
-          cp lambda_function.py lambda-package/
+          cp lambda_function.py lib.py lambda-package/
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
