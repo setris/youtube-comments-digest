@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 from lib import CommentDownloader
@@ -16,7 +17,7 @@ def get_youtube_data_api_key() -> str:
         }
         response = requests.get(secrets_extension_endpoint, headers=headers)
         response.raise_for_status()
-        api_key: str = response.json()["SecretString"]
+        api_key: str = json.loads(response.json()["SecretString"])["youtube_data_api_key"]
         return api_key
     raise Exception(
         f"Unset environment variable `{YOUTUBE_DATA_API_KEY_SECRET_ARN}` for ARN of YouTube Data API Key Secret"
