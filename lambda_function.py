@@ -24,9 +24,9 @@ def get_youtube_data_api_key() -> str:
 
 
 def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
+    print(event)
     params = event["queryStringParameters"]
     channel_name = params["channel"]
-    print(event)
     print(f"Found params: {params}")
     print(f"Found channel name: {channel_name}")
     api_key = get_youtube_data_api_key()
