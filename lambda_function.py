@@ -27,4 +27,6 @@ def get_youtube_data_api_key() -> str:
 def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
     api_key = get_youtube_data_api_key()
     comment_downloader = CommentDownloader(api_key)
-    return {"statusCode": 200, "body": json.dumps("Hello from Lambda!!!")}
+    params = event["queryStringParameters"]
+    channel_name = params["channel"]
+    return {"statusCode": 200, "body": json.dumps(f"Hello from Lambda!!! : {channel_name}")}
