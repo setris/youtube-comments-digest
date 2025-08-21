@@ -24,10 +24,12 @@ def get_youtube_data_api_key() -> str:
 
 
 def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
-    api_key = get_youtube_data_api_key()
-    comment_downloader = CommentDownloader(api_key)
     params = event["queryStringParameters"]
     channel_name = params["channel"]
+    print(f"Found params: {params}")
+    print(f"Found channel name: {channel_name}")
+    api_key = get_youtube_data_api_key()
+    comment_downloader = CommentDownloader(api_key)
     output = comment_downloader.digest(
         channel_handle=channel_name,
         limit=500,
