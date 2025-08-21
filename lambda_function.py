@@ -1,4 +1,3 @@
-import json
 import os
 import requests
 from lib import CommentDownloader
@@ -29,4 +28,14 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
     comment_downloader = CommentDownloader(api_key)
     params = event["queryStringParameters"]
     channel_name = params["channel"]
-    return {"statusCode": 200, "body": json.dumps(f"Hello from Lambda!!! : {channel_name}")}
+    output = comment_downloader.digest(
+        channel_handle=channel_name,
+        limit=500,
+    )
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "text/html",
+        },
+        "body": output,
+    }
